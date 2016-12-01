@@ -1,150 +1,132 @@
-import random
+print("Welcome! Did you know Captain James Cook played this game on long voyages?")
+print("Enjoy Crabbing with Cook!!")
 
-# create variables for board (list), rows (int input), and columns (int input)
-board = []
-current_turn = "X"
-winning = "no"
+def row_setup(row_and_column_max, row_and_column_min):
+    """
+    input: row and column max and min
+    usage: user selects dimensions of game within limits
+    output: number of rows
+    """
+    rows = int(input("How deep is your ocean? Please enter a number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    while rows < row_and_column_min or rows > row_and_column_max:
+        print("That is not a valid input.")
+        rows = int(input("How deep is your ocean? Please enter a number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    return rows
 
-row_and_column_max = 10
-row_and_column_min = 4
+def column_setup(row_and_column_max, row_and_column_min):
+    """
+    input: row and column max and min
+    usage: user selects dimensions of game within limits
+    output: number of columns
+    """
+    columns = int(input("How wide is your ocean? Please enter a number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    while columns < row_and_column_min or columns > row_and_column_max:
+        print("That is not a valid input.")
+        columns = int(input("How wide is your ocean? Please enter a number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    return columns
 
-print("Welcome! Today you are going to play a fun variation of Connect Four...")
-print("COLECHT FOUR!")
-
-rows = int(input("Please enter the number of rows you would like ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
-columns = int(input("Please enter the number of columns you would like ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
-
-# check for rows and columns to ensure they are digits in the acceptable range
-while rows < 4 or rows > 10:
-    print("That is not a valid input.")
-    rows = int(input("Please enter the number of rows you would like ({}-{}, 6 is default) > ".format(row_and_column_min, row_and_column_max)))
-    columns = int(input("Please enter the number of columns you would like ({}-{}, 7 is default) > ".format(row_and_column_min, row_and_column_max)))
-
-# initialize board with double for loop
 def create_board(rows, columns):
     """
-    create board using user-entered #s for rows and columns
-    inputs are rows and columns integers from user inputs
-    output is a populated board list of lists
+    input: integer for rows and columns
+    usage: create board list of lists using user-entered #s for rows and columns
+    output: is a populated blank board list of lists
     """
+    board = []
     for i in range(0,rows):
         board.append([])
         for j in range(0,columns):
             board[i].append("*")
+    return board
 
-# printing current status of board
 def print_board(board):
     """
-    function to print current status of board
-    takes a list as an argument, in this case the board list
-    output is printing the board list contents with spaces in between
+    input: board list of lists
+    usage: print current status of board
+    output: none, prints only
     """
     for row in board:
         print(" ".join(row))
 
-# FUNCTION TO ASK FOR COLUMN SELECTION, CHECK IF OPEN, CHANGE VALUE AS NEEDED
-def column_select(rows):
+def column_select(rows, columns, board, current_turn):
     """
-    function to take column selection, check if space is open, and change value
-    takes rows as input to cycle through and check for open spaces
-    output is to change the value to mark a player's choice
+    input: rows and columns as integers, board as list of lists, current_turn
+    usage: take column selection, check if space is open, change value
+    output: new board list of lists
     """
-    column_selection = int(input("Player {}, please choose a row > ".format(current_turn)))
-    while column_selection < 1 or column_selection > columns:
-        column_selection = int(input("Player {}, please choose a valid row > ".format(current_turn)))
-    for i in range(0,rows):
+    column_selection = int(input("Player {}, please choose a column > ".format(current_turn)))
+    while column_selection < 0 or column_selection > columns - 1 or board[0][column_selection] != "*":
+        column_selection = int(input("Player {}, please choose a valid column > ".format(current_turn)))
+    for i in range(rows-1,-1,-1):
         if board[i][column_selection] == "*":
             board[i][column_selection] = current_turn
             break
+    return board
 
-
-# ADD IS_WIN(TURN) FUNCTION THAT RETURNS TRUE OR FALSE -- if is false, make next turn
-def is_win(current_turn, rows, columns):
-    for h in range(0, columns - 3): # horizontal win combinations
-        for r in range(0, rows - 3):
+def is_win(rows, columns, board):
+    """
+    input: rows and columns as integers, board as list of lists
+    usage: check all possible winning combinations
+    output: False if win state accomplished, otherwise True
+    """
+    winning = "no"
+    for h in range(0, rows): # horizontal win combinations
+        for r in range(0, columns - 3):
             if board[h][r] == board[h][r+1] == board[h][r+2] == board[h][r+3] != "*":
                 winning = "yes"
-    for v # vertical win combinations
-
-    for du # diagonal-up win combinations
-
-    for dd # diagonal-down win combinations
-
-    if winning = "yes":
-        break
+    for v in range(0, rows - 3): # vertical win combinations
+        for c in range(0, columns):
+            if board[v][c] == board[v+1][c] == board[v+2][c] == board[v+3][c] != "*":
+                winning = "yes"
+    for du in range(3, rows): # diagonal-up win combinations
+        for c in range(0, columns - 3):
+            if board[du][c] == board[du - 1][c + 1] == board[du - 2][c + 2] == board[du - 3][c + 3] != "*":
+                winning = "yes"
+    for dd in range(0, columns - 3): # diagonal-down win combinations
+        for c in range(0, rows - 3):
+            if board[dd][c] == board[dd + 1][c + 1] == board[dd + 2][c + 2] == board[dd + 3][c + 3] != "*":
+                winning = "yes"
+    if winning == "yes":
+        return False
     else:
-        if current_turn == "X":
-            current_turn = "O"
-        else:
-            current_turn = "X"
+        return True
 
-# have four separate functions for horizontal, vertical, diagonal-up, and diagonal-down (ending with row/column - 3)
+def change_turns(current_turn):
+    """
+    input: current_turn
+    usage: change turns
+    output: current_turn
+    """
+    if current_turn == "O":
+        current_turn = "X"
+    else:
+        current_turn = "O"
+    return current_turn
 
-# REPLACE OTHER PARTS OF GAME
-
-# one function to rule, er, run them all
 def app():
     """
-    function to play tic tac toe with user vs computer selecting at random
-    function takes no input but it will prompt the user to enter row and column
-    output is printing either the winner or a tie game to the console
+    input: none
+    usage: calls all necessary functions to play two player connect four
+    output: no output, prints current status of game after every turn
     """
-    create_board(rows, columns)
+    row_and_column_max = 10
+    row_and_column_min = 4
+    current_turn = "O"
+    current_turn = change_turns(current_turn)
+    rows = row_setup(row_and_column_max, row_and_column_min)
+    columns = column_setup(row_and_column_max, row_and_column_min)
+    board = create_board(rows, columns)
     print_board(board)
-    column_select()
-    is_win(current_turn, rows, columns)
-
-app()
-
-'''
-    for i in range(0,9):
-        print("It is the {}'s turn.".format(current_turn))
-        if current_turn == "o": # computer selection
-            row = random.randint(0,2)
-            column = random.randint(0,2)
-        elif current_turn == "x": # user selection
-            row = int(input("Please enter a row number (0-2) > "))
-            column = int(input("Please enter a column number (0-2) > "))
-
-        while board[row][column] != "*": # check to make sure spot is open, ask again if necessary
-            if current_turn == "o":
-                row = random.randint(0,2)
-                column = random.randint(0,2)
-            elif current_turn == "o":
-                print("That spot is already taken.")
-                row = int(input("Please enter a row number (0-2) > "))
-                column = int(input("Please enter a column number (0-2) > "))
-
-        if current_turn == "o":
-            print("The computer chose row {} and column {}.".format(row,column))
-
-        board[row][column] = current_turn # change * to x or o
-
-        for i in range(0,3): # check to see if any winning condition is met
-            if board[i][0] == board[i][1] == board[i][2] != "*":
-                game_over = "yes"
-            elif board[0][i] == board[1][i] == board[2][i] != "*":
-                game_over = "yes"
-            elif board[0][0] == board[1][1] == board[2][2] != "*":
-                game_over = "yes"
-            elif board[0][2] == board[1][1] == board[2][0] != "*":
-                game_over = "yes"
-        if game_over == "yes": # win condition is met, break
+    board = column_select(rows, columns, board, current_turn)
+    while is_win(rows, columns, board):
+        print_board(board)
+        current_turn = change_turns(current_turn)
+        board = column_select(rows, columns, board, current_turn)
+        if sum(x.count("*") for x in board) == 0: # if no free spaces, break
             break
-
-        if current_turn == "x": # switch turns
-            current_turn = "o"
-        else:
-            current_turn = "x"
-
-        print_board(board) # print current status of board
-
-    if game_over == "yes":
-        print("CONGRATULATIONS to team {}, you win!".format(current_turn))
+    if is_win(rows, columns, board) == True: # game ends with no winner
+        print("It is a tie! Thanks for playing.")
     else:
-        print("Sometimes nobody wins! Game over.")
-
+        print("Congratulations Player {}, you win!".format(current_turn))
     print_board(board)
 
 app()
-'''
