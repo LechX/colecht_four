@@ -7,7 +7,10 @@ def row_setup(row_and_column_max, row_and_column_min):
     usage: user selects dimensions of game within limits
     output: number of rows
     """
-    rows = int(input("How deep is your ocean? Please enter a number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    try:
+        rows = int(input("How deep is your ocean? Please enter a number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    except ValueError:
+        rows = int(input("How deep is your ocean? Please enter a valid number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
     while rows < row_and_column_min or rows > row_and_column_max:
         print("That is not a valid input.")
         rows = int(input("How deep is your ocean? Please enter a number ({}-{}, 6 is standard) > ".format(row_and_column_min, row_and_column_max)))
@@ -19,7 +22,10 @@ def column_setup(row_and_column_max, row_and_column_min):
     usage: user selects dimensions of game within limits
     output: number of columns
     """
-    columns = int(input("How wide is your ocean? Please enter a number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    try:
+        columns = int(input("How wide is your ocean? Please enter a number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
+    except ValueError:
+        columns = int(input("How wide is your ocean? Please enter a valid number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
     while columns < row_and_column_min or columns > row_and_column_max:
         print("That is not a valid input.")
         columns = int(input("How wide is your ocean? Please enter a number ({}-{}, 7 is standard) > ".format(row_and_column_min, row_and_column_max)))
