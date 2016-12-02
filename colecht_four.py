@@ -53,7 +53,10 @@ def column_select(rows, columns, board, current_turn):
     usage: take column selection, check if space is open, change value
     output: new board list of lists
     """
-    column_selection = int(input("Player {}, please choose a column > ".format(current_turn)))
+    try:
+        column_selection = int(input("Player {}, please choose a column > ".format(current_turn)))
+    except ValueError:
+        column_selection = int(input("Player {}, please choose a valid column > ".format(current_turn)))
     while column_selection < 0 or column_selection > columns - 1 or board[0][column_selection] != "*":
         column_selection = int(input("Player {}, please choose a valid column > ".format(current_turn)))
     for i in range(rows-1,-1,-1):
@@ -62,6 +65,50 @@ def column_select(rows, columns, board, current_turn):
             break
     return board
 
+def is_horizontal_win(rows, columns, board):
+    """
+    input: rows and columns as integers, board as list of lists
+    usage: check all XXX possible winning combinations
+    output: True if win state accomplished, otherwise False
+    """
+    for h in range(0, rows):
+        for c in range(0, columns - 3):
+            if board[h][c] == board[h][c + 1] == board[h][c + 2] == board[h][c + 3] != "*":
+                return True
+
+def is_vertical_win(rows, columns, board):
+    """
+    input: rows and columns as integers, board as list of lists
+    usage: check all XXX possible winning combinations
+    output: True if win state accomplished, otherwise False
+    """
+    for v in range(0, rows - 3):
+        for c in range(0, columns):
+            if board[v][c] == board[v + 1][c] == board[v + 2][c] == board[v + 3][c] != "*":
+                return True
+
+def is_diagonal_up_win(rows, columns, board):
+    """
+    input: rows and columns as integers, board as list of lists
+    usage: check all XXX possible winning combinations
+    output: True if win state accomplished, otherwise False
+    """
+    for du in range(3, rows):
+        for c in range(0, columns - 3):
+            if board[du][c] == board[du - 1][c + 1] == board[du - 2][c + 2] == board[du - 3][c + 3] != "*":
+                return True
+
+def is_diagonal_down_win(rows, columns, board):
+    """
+    input: rows and columns as integers, board as list of lists
+    usage: check all XXX possible winning combinations
+    output: True if win state accomplished, otherwise False
+    """
+    for dd in range(0, rows - 3):
+        for c in range(0, columns - 3):
+            if board[dd][c] == board[dd + 1][c + 1] == board[dd + 2][c + 2] == board[dd + 3][c + 3] != "*":
+                return True
+
 def is_win(rows, columns, board):
     """
     input: rows and columns as integers, board as list of lists
@@ -69,22 +116,11 @@ def is_win(rows, columns, board):
     output: False if win state accomplished, otherwise True
     """
     winning = "no"
-    for h in range(0, rows): # horizontal win combinations
-        for r in range(0, columns - 3):
-            if board[h][r] == board[h][r+1] == board[h][r+2] == board[h][r+3] != "*":
-                winning = "yes"
-    for v in range(0, rows - 3): # vertical win combinations
-        for c in range(0, columns):
-            if board[v][c] == board[v+1][c] == board[v+2][c] == board[v+3][c] != "*":
-                winning = "yes"
-    for du in range(3, rows): # diagonal-up win combinations
-        for c in range(0, columns - 3):
-            if board[du][c] == board[du - 1][c + 1] == board[du - 2][c + 2] == board[du - 3][c + 3] != "*":
-                winning = "yes"
-    for dd in range(0, columns - 3): # diagonal-down win combinations
-        for c in range(0, rows - 3):
-            if board[dd][c] == board[dd + 1][c + 1] == board[dd + 2][c + 2] == board[dd + 3][c + 3] != "*":
-                winning = "yes"
+    if is_vertical_win(rows, columns, board) or \
+       is_horizontal_win(rows, columns, board) or \
+       is_diagonal_up_win(rows, columns, board) or \
+       is_diagonal_down_win(rows, columns, board):
+        winning = "yes"
     if winning == "yes":
         return False
     else:
